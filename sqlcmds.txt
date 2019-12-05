@@ -1,0 +1,178 @@
+INSERT INTO employees(emp_no, first_name, last_name, birth_date, gender, hire_date) VALUES (500005, 'Victor','Garcia','1975-04-01','M','1986-01-01') ;
+
+ SELECT * FROM ( SELECT * FROM employees ORDER BY emp_no DESC LIMIT 10 ) sub ORDER BY emp_no ASC
+
+describe employees
+
+show tables
+
+USE employees
+
+show databases
+
+SELECT * FROM ( SELECT * FROM titles ORDER BY emp_no DESC LIMIT 15 ) sub ORDER BY emp_no ASC
++--------+------------+------------+-----------+--------+------------+
+| emp_no | birth_date | first_name | last_name | gender | hire_date  |
++--------+------------+------------+-----------+--------+------------+
+| 499995 | 1958-09-24 | Dekang     | Lichtner  | F      | 1993-01-12 |
+| 499996 | 1953-03-07 | Zito       | Baaz      | M      | 1990-09-27 |
+| 499997 | 1961-08-03 | Berhard    | Lenart    | M      | 1986-04-21 |
+| 499998 | 1956-09-05 | Patricia   | Breugel   | M      | 1993-10-13 |
+| 499999 | 1958-05-01 | Sachin     | Tsukuda   | M      | 1997-11-30 |
+| 500000 | 1962-01-01 | Raul       | Spikes    | M      | 1980-01-01 |
+| 500002 | 1963-01-01 | Raul       | Martin    | M      | 1985-01-01 |
+| 500003 | 1973-01-01 | Joy        | Hensenn   | F      | 1995-01-01 |
+| 500004 | 1974-01-01 | Venessa    | Garcia    | F      | 1996-01-01 |
+| 500005 | 1975-04-01 | Victor     | Garcia    | M      | 1986-01-01 |
+| 500006 | 1972-09-01 | Tony       | Stark     | M      | 1986-05-01 |
+| 500007 | 1967-09-01 | Tania      | Stark     | F      | 1981-05-01 |
+| 500008 | 1977-05-01 | Scarlet    | Johanson  | F      | 1998-05-01 |
+| 500009 | 1967-03-01 | Toni       | Romano    | M      | 1983-05-01 |
+| 500010 | 1966-03-01 | Cristiano  | Ronaldo   | M      | 1984-05-01 |
+| 500011 | 1966-03-01 | Laura      | Liotta    | F      | 1982-05-01 |
+| 500012 | 1964-08-10 | Andreas    | Mikelson  | M      | 1982-05-01 |
+| 500013 | 1960-08-10 | Matias     | Nordman   | M      | 1988-05-01 |
+| 500014 | 1970-04-10 | Marta      | Nordman   | F      | 1991-05-01 |
+| 500015 | 1960-04-10 | Raul       | Mikelson  | M      | 1987-06-01 |
++--------+------------+------------+-----------+--------+------------+
+
+to insert into another table of titles
+INSERT INTO titles(emp_no, from_date) SELECT emp_no, hire_date WHERE emp_no=500000; and then update table
+UPDATE titles SET title='Staff', to_date='1991-03-01' WHERE emp_no=500002;
+
++--------+--------------------+------------+------------+
+| emp_no | title              | from_date  | to_date    |
++--------+--------------------+------------+------------+
+| 499997 | Senior Engineer    | 1992-08-29 | 9999-01-01 |
+| 499997 | Engineer           | 1987-08-30 | 1992-08-29 |
+| 499998 | Staff              | 1993-12-27 | 1998-12-27 |
+| 499998 | Senior Staff       | 1998-12-27 | 9999-01-01 |
+| 499999 | Engineer           | 1997-11-30 | 9999-01-01 |
+| 500000 | Manager            | 1980-01-01 | 2007-08-01 |
+| 500002 | Staff              | 1985-01-01 | 1991-03-01 |
+| 500003 | Senior Staff       | 1995-01-01 | 9999-01-01 |
+| 500004 | Manager            | 1996-01-01 | 9999-01-01 |
+| 500005 | Manager            | 1986-01-01 | 9999-01-01 |
+| 500006 | Engineer           | 1986-05-01 | 9999-01-01 |
+| 500007 | Assistant Engineer | 1981-05-01 | 1999-01-01 |
+| 500008 | Assistant Engineer | 1998-05-01 | 2019-01-01 |
+| 500009 | Technique Leader   | 1983-05-01 | 2019-01-01 |
+| 500010 | Senior Staff       | 1984-05-01 | 2019-04-01 |
+| 500011 | Senior Engineer    | 1982-05-01 | 2019-10-01 |
+| 500012 | Senior Engineer    | 1982-05-01 | 9999-01-01 |
+| 500013 | Assistant Engineer | 1988-05-01 | 9999-01-01 |
+| 500014 | Staff              | 1991-05-01 | 9999-01-01 |
+| 500015 | Staff              | 1987-06-01 | 1991-01-01 |
++--------+--------------------+------------+------------+
+
+To approximate better find the minimum and the maximum salaries and insert random values into salaries
+INSERT INTO salaries( emp_no, salary, from_date, to_date ) VALUES( (SELECT emp_no FROM `employees` WHERE emp_no=500000), 500000,  (SELECT from_date from titles WHERE emp_no=500000), (SELECT to_date FROM titles WHERE emp_no=500000));
+select minimum salary
+SELECT MIN(salary) FROM salaries
+select maximum salary 
+to get appropriate salaries
+SELECT * FROM salaries ORDER BY salary DESC LIMIT 2; ( to take into the account of just added salary value)
+ INSERT INTO salaries( emp_no, salary, from_date, to_date ) VALUES( (SELECT emp_no FROM `employees` WHERE emp_no=500004), FLOOR(38263+RAND()*(158220-38623)),  (SELECT from_date from titles WHERE emp_no=500004), (SELECT to_date FROM titles WHERE emp_no=500004));
+to insert two different salaries
+INSERT INTO salaries( emp_no, salary, from_date, to_date ) VALUES( (SELECT emp_no FROM `employees` WHERE emp_no=500010), FLOOR(38263+RAND()*(158220-38623)),  (SELECT from_date from titles WHERE emp_no=500010),(DATE_ADD((SELECT from_date FROM titles WHERE emp_no=500010), INTERVAL 12 year ) ) );
+INSERT INTO salaries( emp_no, salary, from_date, to_date ) VALUES( (SELECT emp_no FROM `employees` WHERE emp_no=500010), FLOOR(38263+RAND()*(158220-38623)),  '1996-05-02',(SELECT to_date from titles WHERE emp_no=500010) );
+
+| emp_no | salary | from_date  | to_date    |
++--------+--------+------------+------------+
+| emp_no | salary | from_date  | to_date    |
++--------+--------+------------+------------+
+| 499999 |  77303 | 2001-11-29 | 9999-01-01 |
+| 499999 |  74327 | 2000-11-29 | 2001-11-29 |
+| 499999 |  70745 | 1999-11-30 | 2000-11-29 |
+| 500000 | 500000 | 1980-01-01 | 2007-08-01 |
+| 500002 |  98036 | 1985-01-01 | 1991-03-01 |
+| 500003 |  38696 | 1995-01-01 | 9999-01-01 |
+| 500004 | 100304 | 1996-01-01 | 9999-01-01 |
+| 500005 | 107978 | 1986-01-01 | 9999-01-01 |
+| 500006 |  81116 | 1986-05-01 | 9999-01-01 |
+| 500007 |  43384 | 1981-05-01 | 1999-01-01 |
+| 500008 |  54908 | 1998-05-01 | 2019-01-01 |
+| 500009 | 106125 | 1983-05-01 | 2019-01-01 |
+| 500010 |  85592 | 1996-05-02 | 2019-04-01 |
+| 500010 |  88446 | 1984-05-01 | 1996-05-01 |
+| 500011 | 146103 | 2002-05-02 | 2019-10-01 |
+| 500011 |  87570 | 1992-05-01 | 1992-05-01 |
+| 500011 | 124361 | 1982-05-01 | 1992-05-01 |
+| 500012 |  92182 | 2002-05-02 | 9999-01-01 |
+| 500012 |  70751 | 1982-05-01 | 2002-05-01 |
+| 500013 |  52750 | 1993-05-02 | 9999-01-01 |
+| 500013 |  73512 | 1988-05-01 | 2003-05-01 |
+| 500014 |  67453 | 2011-05-02 | 9999-01-01 |
+| 500014 | 124552 | 1991-05-01 | 2011-05-01 |
+| 500014 |  44945 | 1987-06-01 | 1991-01-01 |
+| 500015 | 106208 | 1987-06-01 | 1991-01-01 |
++--------+--------+------------+------------+
+
+Select only those ids where the manager value is present hence,
+INSERT INTO dept_manager(emp_no, dept_no, from_date, to_date) VALUES((SELECT emp_no FROM titles WHERE emp_no=500013), 'd002',(SELECT from_date from titles WHERE emp_no =500013), (SELECT to_date from titles WHERE emp_no=500013));
+The above can also be done using create table and directly inserting all the rows of the create table
+
+Inserting into the dept_emp values in a hard coded way
+ INSERT INTO dept_emp(emp_no, dept_no, from_date, to_date) SELECT emp_no, dept_no, from_date, to_date from dept_manager where emp_no=500000; First get the managers and then the rest
++--------+---------+------------+------------+
+| emp_no | dept_no | from_date  | to_date    |
++--------+---------+------------+------------+
+| 499999 | d004    | 1997-11-30 | 9999-01-01 |
+| 500000 | d007    | 1980-01-01 | 2007-08-01 |
+| 500002 | d003    | 1985-01-01 | 1991-03-01 |
+| 500002 | d001    | 1985-01-01 | 1991-03-01 |
+| 500003 | d003    | 1995-01-01 | 9999-01-01 |
+| 500003 | d001    | 1995-01-01 | 9999-01-01 |
+| 500004 | d004    | 1996-01-01 | 9999-01-01 |
+| 500005 | d005    | 1986-01-01 | 9999-01-01 |
+| 500006 | d003    | 1986-05-01 | 9999-01-01 |
+| 500007 | d001    | 1981-05-01 | 1999-01-01 |
+| 500008 | d006    | 1998-05-01 | 2019-01-01 |
+| 500008 | d003    | 1998-05-01 | 2019-01-01 |
+| 500009 | d004    | 1983-05-01 | 2019-01-01 |
+| 500009 | d003    | 1983-05-01 | 2019-01-01 |
+| 500010 | d005    | 1984-05-01 | 2019-04-01 |
+| 500010 | d001    | 1984-05-01 | 2019-04-01 |
+| 500011 | d009    | 1982-05-01 | 2019-10-01 |
+| 500011 | d005    | 1982-05-01 | 2019-10-01 |
+| 500012 | d007    | 1982-05-01 | 9999-01-01 |
+| 500012 | d002    | 1982-05-01 | 9999-01-01 |
+| 500013 | d002    | 1988-05-01 | 9999-01-01 |
+| 500014 | d007    | 1991-05-01 | 9999-01-01 |
+| 500014 | d001    | 1991-05-01 | 9999-01-01 |
+| 500015 | d002    | 1987-06-01 | 1991-01-01 |
+| 500015 | d001    | 1987-06-01 | 1991-01-01 |
++--------+---------+------------+------------+
+
+INSERT INTO dept_emp(emp_no, from_date, to_date, dept_no) VALUES( (SELECT emp_no from titles where emp_no=500003), (SELECT from_date from titles where emp_no=500003), (SELECT to_date from titles where emp_no=500003),'d003');
+
+updating a name;
+
+ UPDATE employees SET first_name = 'Saxon', last_name='Francois' WHERE first_name='Sachin' AND last_name='Tsukuda' AND birth_date='1958-05-01';
+update department names
+UPDATE departments SET dept_name='New customer service' WHERE dept_no='d009';
+
+//select statements(USE limits to show only particular values )
+SELECT * FROM employees INNER JOIN salaries ON employees.emp_no=salaries.emp_no WHERE salaries.salary>20000 LIMIT 25;
+SELECT * FROM employees INNER JOIN salaries ON employees.emp_no=salaries.emp_no WHERE salaries.salary<10000 LIMIT 25;
+SELECT * FROM employees INNER JOIN salaries ON employees.emp_no=salaries.emp_no WHERE salaries.salary BETWEEN 1400 AND 50000 LIMIT 25;
+SELECT COUNT(*) FROM employees LIMIT 25;
+SELECT * FROM( SELECT emp_no, COUNT(*) as count FROM dept_emp GROUP BY emp_no HAVING COUNT(*) >1 ORDER BY emp_no DESC LIMIT 25) sub ORDER BY emp_no ASC;
+SELECT title FROM TITLES WHERE from_date LIKE '%2019%' OR to_date LIKE '%2019%' LIMIT 25;
+SELECT title FROM TITLES WHERE year(from_date)='2019' OR year(to_date)='2019'  LIMIT 25;
+SELECT first_name, last_name FROM employees WHERE ASCII(left(first_name, 1)) between ASCII('A') and ASCII('Z') LIMIT 25;
+SELECT E.first_name, E.last_name, D. dept_name FROM employees E INNER JOIN current_dept_emp as C ON E.emp_no= C.emp_no INNER JOIN Departments as D ON C.dept_no=D.dept_no LIMIT 25;
+SELECT E.first_name, E.last_name, COUNT(*) FROM employees as E INNER JOIN Titles as t ON E.emp_no=T.emp_no WHERE title='Manager' GROUP BY E.emp_no  LIMIT 25;
+SELECT DISTINCT(E.first_name) FROM employees AS E;
+
+DELETE E.*, DE.*, DM.*, S.* , T.* FROM employees E INNER JOIN dept_emp as DE ON E.emp_no= DE.emp_no INNER JOIN dept_manager as DM ON DE.emp_no= DM.emp_no INNER JOIN salaries as S ON DM.emp_no = S.emp_no INNER JOIN titles as T ON S.emp_no = T.emp_no WHERE S.salary >20000;
+
+
+for deleting the maximum value
+DELETE DE.*, DM.*, D.* FROM dept_emp as DE INNER JOIN (SELECT MAX(dept_no) maxt FROM dept_emp) TdeMAx ON DE.dept_no=TdeMAx.maxt INNER JOIN dept_manager as DM ON DM.dept_no=TdeMAx.maxt INNER JOIN departments as D ON D.dept_no=TdeMAx.maxt;
+
+
+
+
+
+
